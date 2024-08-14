@@ -1,16 +1,17 @@
-import { promises as fs ,existsSync} from "fs";
-import {createIfNot} from "./utils/fileUtils.js"
-import * as  path from "node:path"
+import { promises as fs, existsSync } from "fs";
+import { createIfNot } from "./utils/fileUtils.js";
+import * as path from "node:path";
+
 async function writeSQL(statement: string, saveFileAs = "", isAppend: boolean = false) {
   try {
     const destinationFile = process.argv[2] || saveFileAs;
     if (!destinationFile) {
       throw new Error("Missing saveFileAs parameter");
     }
-    createIfNot(path.resolve(`./sql/${destinationFile}.sql`))
-		if(isAppend){
+    createIfNot(path.resolve(`./sql/${destinationFile}.sql`));
+    if (isAppend) {
       await fs.appendFile(`sql/${process.argv[2]}.sql`, statement);
-    }else{
+    } else {
       await fs.writeFile(`sql/${process.argv[2]}.sql`, statement);
     }
   } catch (err) {
@@ -23,14 +24,14 @@ async function readCSV(csvFileName = "", batchSize: number = 0) {
     const fileAndTableName = process.argv[2] || csvFileName;
     
     batchSize = parseInt(process.argv[3]) || batchSize || 500;
-		let isAppend: boolean = false;
+    let isAppend: boolean = false;
 
     if (!fileAndTableName) {
       throw new Error("Missing csvFileName parameter");
     }
-    if(!existsSync(path.resolve(`./csv/${fileAndTableName}.csv`))){
-      console.log("file not found")
-      return
+    if (!existsSync(path.resolve(`./csv/${fileAndTableName}.csv`))) {
+      console.log("file not found");
+      return;
     }
     const data = await fs.readFile(`csv/${fileAndTableName}.csv`, {
       encoding: "utf8",
@@ -53,7 +54,7 @@ async function readCSV(csvFileName = "", batchSize: number = 0) {
       }
 
       // Check batch size (rows per batch)
-      if(index > 0 && index % batchSize == 0){
+      if (index > 0 && index % batchSize == 0) {
         values = values.slice(0, -2) + ";\n\n";
     
         const sqlStatement = beginSQLInsert + values;
@@ -91,5 +92,6 @@ async function readCSV(csvFileName = "", batchSize: number = 0) {
     console.log(err);
   }
 }
+
 readCSV();
 console.log("Finished!");
