@@ -2,6 +2,7 @@ import fs from "node:fs/promises"
 import { existsSync } from "node:fs"
 import { createIfNot } from "./utils/fileUtils.mjs"
 import path from "node:path"
+// write sql function to write sql commands
 async function writeSQL(statement, saveFileAs = "") {
   try {
     const destinationFile = process.argv[2] || saveFileAs
@@ -14,6 +15,8 @@ async function writeSQL(statement, saveFileAs = "") {
     console.log(err)
   }
 }
+
+// function to read CSV files, passed .csv as parameter
 async function readCSV(csvFileName = "") {
   try {
     const fileAndTableName = process.argv[2] || csvFileName
